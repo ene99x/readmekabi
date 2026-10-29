@@ -9,7 +9,7 @@
     <!-- FontAwesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Fira+Code:wght@500;700&display=swap');
 
         * {
             box-sizing: border-box;
@@ -21,7 +21,7 @@
         body, html {
             width: 100%;
             height: 100%;
-            overflow-x: hidden;
+            overflow: hidden;
             background-color: #030108;
             font-family: 'Plus Jakarta Sans', sans-serif;
             color: #ffffff;
@@ -39,27 +39,26 @@
 
         /* Glassmorphism Panel */
         .glass-panel {
-            background: rgba(18, 8, 30, 0.75);
+            background: rgba(18, 8, 30, 0.82);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(218, 179, 255, 0.3);
-            box-shadow: 0 8px 32px 0 rgba(147, 51, 234, 0.3),
+            border: 1px solid rgba(218, 179, 255, 0.35);
+            box-shadow: 0 8px 32px 0 rgba(147, 51, 234, 0.35),
                         inset 0 0 15px rgba(218, 179, 255, 0.15);
         }
 
-        /* Caixa de Texto customizada para as frases finais */
+        /* Caixa de Texto customizada */
         .text-box-custom {
-            background: rgba(0, 0, 0, 0.65);
+            background: rgba(0, 0, 0, 0.75);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(218, 179, 255, 0.25);
-            border-radius: 10px;
-            padding: 16px 24px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8), inset 0 0 10px rgba(218, 179, 255, 0.1);
+            border: 1px solid rgba(218, 179, 255, 0.3);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8), inset 0 0 10px rgba(218, 179, 255, 0.15);
         }
 
         .neon-btn {
-            background: linear-gradient(135deg, rgba(218, 179, 255, 0.25) 0%, rgba(168, 85, 247, 0.45) 100%);
+            background: linear-gradient(135deg, rgba(218, 179, 255, 0.25) 0%, rgba(168, 85, 247, 0.5) 100%);
             border: 1px solid rgba(218, 179, 255, 0.7);
             color: #f3e8ff;
             text-shadow: 0 0 10px rgba(218, 179, 255, 0.8), 0 0 20px rgba(168, 85, 247, 0.6);
@@ -69,7 +68,7 @@
 
         .neon-btn:hover {
             transform: translateY(-2px) scale(1.02);
-            background: linear-gradient(135deg, rgba(218, 179, 255, 0.4) 0%, rgba(168, 85, 247, 0.7) 100%);
+            background: linear-gradient(135deg, rgba(218, 179, 255, 0.4) 0%, rgba(168, 85, 247, 0.75) 100%);
             box-shadow: 0 0 30px rgba(218, 179, 255, 0.7), 0 0 50px rgba(168, 85, 247, 0.5);
             border-color: rgba(233, 213, 255, 1);
         }
@@ -77,7 +76,7 @@
         /* Float Animation */
         @keyframes floatUpDown {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-6px); }
+            50% { transform: translateY(-4px); }
         }
 
         .floating-box {
@@ -105,18 +104,18 @@
         }
     </style>
 </head>
-<body class="relative min-h-screen flex flex-col justify-between items-center overflow-y-auto">
+<body class="relative h-screen w-screen flex flex-col justify-between items-center overflow-hidden">
 
-    <!-- Canvas Animation Layer -->
-    <canvas id="neonCanvas"></canvas>
+    <!-- Canvas Animation Layer (Efeito Matrix Roxo) -->
+    <canvas id="matrixCanvas"></canvas>
 
     <!-- UI Overlay -->
-    <div class="relative z-10 flex flex-col items-center justify-between w-full max-w-4xl min-h-screen p-6 pointer-events-none">
+    <div class="relative z-10 flex flex-col items-center justify-between w-full max-w-4xl h-full py-4 px-4 pointer-events-none">
         
         <!-- HEADER: Botão de Música no Topo -->
-        <header class="w-full flex justify-center pointer-events-auto pt-2">
-            <button id="playBtn" class="neon-btn px-6 py-3 rounded-full flex items-center gap-3 text-sm md:text-base font-bold tracking-wide">
-                <div id="eqIcon" class="flex items-end gap-1 h-5 paused">
+        <header class="w-full flex justify-center pointer-events-auto shrink-0">
+            <button id="playBtn" class="neon-btn px-5 py-2.5 rounded-full flex items-center gap-3 text-xs md:text-sm font-bold tracking-wide">
+                <div id="eqIcon" class="flex items-end gap-1 h-4 paused">
                     <div class="eq-bar"></div>
                     <div class="eq-bar"></div>
                     <div class="eq-bar"></div>
@@ -126,42 +125,42 @@
             </button>
         </header>
 
-        <!-- CENTER: Caixa Flutuante Spotify -->
-        <main class="w-full max-w-md my-auto pointer-events-auto px-4">
-            <div class="glass-panel p-4 rounded-3xl shadow-2xl border border-purple-500/40 flex flex-col items-center gap-3">
+        <!-- CENTER: Caixa Flutuante Spotify Ajustada -->
+        <main class="w-full max-w-md my-auto pointer-events-auto px-2 shrink">
+            <div class="glass-panel p-3.5 rounded-3xl shadow-2xl border border-purple-500/40 flex flex-col items-center gap-2.5">
                 <div class="w-full flex items-center justify-between px-2">
-                    <span class="text-xs font-semibold tracking-wider text-purple-200 uppercase flex items-center gap-2">
-                        <i class="fa-brands fa-spotify text-green-400 text-sm"></i> Memórias Póstumas de um amor resiliente
+                    <span class="text-xs font-semibold tracking-wider text-purple-200 uppercase flex items-center gap-2 truncate">
+                        <i class="fa-brands fa-spotify text-green-400 text-sm"></i> Memórias Póstumas de Um Amor
                     </span>
-                    <span class="w-2 h-2 rounded-full bg-purple-400 animate-pulse"></span>
+                    <span class="w-2 h-2 rounded-full bg-purple-400 animate-pulse shrink-0"></span>
                 </div>
                 
-                <!-- Novo Iframe da Playlist do Spotify -->
-                <div class="w-full rounded-2xl overflow-hidden shadow-lg bg-black/50">
-                    <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/playlist/0oYDW53WkRFJH20x4Oules?utm_source=generator&theme=0&si=dc90ce816b3e44f7" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                <!-- Iframe da Playlist do Spotify com Altura Ideal para Cenas Curtas -->
+                <div class="w-full rounded-2xl overflow-hidden shadow-lg bg-black/60">
+                    <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/playlist/0oYDW53WkRFJH20x4Oules?utm_source=generator&theme=0&si=dc90ce816b3e44f7" width="100%" height="280" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
                 </div>
             </div>
         </main>
 
-        <!-- FOOTER: Frases com Caixa Translúcida e Botão para lastpart.html -->
-        <footer class="w-full flex flex-col items-center gap-5 pb-6 pointer-events-auto text-center">
+        <!-- FOOTER: Frases e Botão -->
+        <footer class="w-full flex flex-col items-center gap-3 shrink-0 pointer-events-auto text-center pb-2">
             
-            <!-- Caixa de Texto com bordas de 10px, fundo translúcido preto e fonte 24px -->
-            <div class="floating-box text-box-custom flex flex-col gap-2">
-                <p class="text-[20px] md:text-[24px] font-semibold text-purple-100 drop-shadow-[0_0_12px_rgba(218,179,255,0.7)] leading-tight">
+            <!-- Caixa de Texto Translúcida -->
+            <div class="floating-box text-box-custom px-6 py-3 flex flex-col gap-1 max-w-md">
+                <p class="text-[17px] md:text-[21px] font-semibold text-purple-100 drop-shadow-[0_0_12px_rgba(218,179,255,0.7)] leading-tight">
                     Obrigada por me acompanhar até aqui! 💜
                 </p>
-                <p class="text-[16px] md:text-[20px] font-medium text-purple-300/90">
+                <p class="text-[14px] md:text-[17px] font-medium text-purple-300/90">
                     Pronta para a última parte?
                 </p>
             </div>
 
-            <!-- Botão Roxo Neon com link para lastpart.html -->
-            <a href="lastpart.html" class="neon-btn bg-purple-600/90 hover:bg-purple-600 text-white font-bold px-9 py-3.5 rounded-full text-base md:text-lg tracking-wider uppercase shadow-[0_0_25px_rgba(168,85,247,0.7)] inline-block text-center">
+            <!-- Botão Roxo Neon para lastpart.html -->
+            <a href="lastpart.html" class="neon-btn bg-purple-600/90 hover:bg-purple-600 text-white font-bold px-8 py-3 rounded-full text-sm md:text-base tracking-wider uppercase shadow-[0_0_25px_rgba(168,85,247,0.7)] inline-block text-center">
                 Bora fia ✨
             </a>
 
-            <span class="text-[10px] text-purple-300/40 mt-1">
+            <span class="text-[10px] text-purple-300/40">
                 Renderizado via HTML5 Canvas • by Anellize 💜 2026
             </span>
         </footer>
@@ -170,11 +169,10 @@
     <!-- AUDIO ELEMENT -->
     <audio id="bgMusic" loop preload="auto">
         <source src="FavoriteGirl.Justin Bieber.mp3" type="audio/mpeg">
-        <source src="FavoriteGirl.Justin Bieber.mp3" type="audio/mpeg">
     </audio>
 
     <script>
-        const canvas = document.getElementById('neonCanvas');
+        const canvas = document.getElementById('matrixCanvas');
         const ctx = canvas.getContext('2d');
         const playBtn = document.getElementById('playBtn');
         const playIcon = document.getElementById('playIcon');
@@ -182,137 +180,74 @@
         const bgMusic = document.getElementById('bgMusic');
 
         let width, height;
-        let particles = [];
+        let columns = [];
         let isPlaying = false;
-        let frame = 0;
 
-        const CONFIG = {
-            text: "favorite girl",
-            font: "bold 9px Arial, sans-serif",
-            baseColor: { r: 218, g: 179, b: 255 }
-        };
+        const phrase = "MY FAVORITE GIRL ";
+        const fontSize = 14;
 
         function resize() {
             width = window.innerWidth;
             height = window.innerHeight;
             canvas.width = width;
             canvas.height = height;
-            loadAndProcessImage();
+            initMatrix();
         }
 
-        class Particle {
-            constructor(x, y, opacityMult = 1.0) {
-                this.x = x;
-                this.y = y;
-                this.opacityMult = opacityMult;
-                this.flickerSpeed = 0.03 + Math.random() * 0.05;
-                this.flickerOffset = Math.random() * Math.PI * 2;
-                this.floatOffset = Math.random() * Math.PI * 2;
-                this.floatSpeed = 0.01 + Math.random() * 0.015;
-            }
+        function initMatrix() {
+            columns = [];
+            const colWidth = fontSize + 4;
+            const totalCols = Math.floor(width / colWidth);
 
-            draw(ctx, frame) {
-                let alpha = (160 + 85 * Math.sin(frame * this.flickerSpeed + this.flickerOffset)) / 255;
-                alpha = Math.max(0.2, Math.min(1.0, alpha)) * this.opacityMult;
+            for (let i = 0; i < totalCols; i++) {
+                const x = i * colWidth;
+                
+                // Filtra as colunas para desenhar APENAS nas laterais (esquerda e direita)
+                const isLeft = x < width * 0.28;
+                const isRight = x > width * 0.72;
 
-                const dx = Math.cos(frame * this.floatSpeed + this.floatOffset) * 0.5;
-                const dy = Math.sin(frame * this.floatSpeed + this.floatOffset) * 0.5;
-
-                ctx.save();
-                ctx.font = CONFIG.font;
-                ctx.fillStyle = `rgba(${CONFIG.baseColor.r}, ${CONFIG.baseColor.g}, ${CONFIG.baseColor.b}, ${alpha})`;
-                ctx.shadowColor = `rgba(218, 179, 255, ${alpha * 0.8})`;
-                ctx.shadowBlur = 4;
-
-                ctx.fillText(CONFIG.text, this.x + dx, this.y + dy);
-                ctx.restore();
+                if (isLeft || isRight) {
+                    columns.push({
+                        x: x,
+                        y: Math.random() * -height,
+                        speed: 1.5 + Math.random() * 2.5,
+                        charIndex: Math.floor(Math.random() * phrase.length)
+                    });
+                }
             }
         }
 
-        function loadAndProcessImage() {
-            const img = new Image();
-            img.crossOrigin = "Anonymous";
-            img.src = 'fotok.jpeg';
-            
-            img.onload = function() {
-                renderSideSilhouettes(img);
-            };
-            img.onerror = function() {
-                console.warn("fotok.jpeg não foi encontrada localmente.");
-            };
-        }
+        function drawMatrix() {
+            // Efeito de rastro roxo/preto transparente
+            ctx.fillStyle = 'rgba(3, 1, 8, 0.18)';
+            ctx.fillRect(0, 0, width, height);
 
-        function renderSideSilhouettes(img) {
-            particles = [];
-            
-            const offscreen = document.createElement('canvas');
-            const offCtx = offscreen.getContext('2d');
-            
-            const processW = 600;
-            const processH = Math.round(600 * (img.height / img.width));
-            offscreen.width = processW;
-            offscreen.height = processH;
+            ctx.font = `700 ${fontSize}px 'Fira Code', monospace`;
 
-            offCtx.drawImage(img, 0, 0, processW, processH);
-            const imgData = offCtx.getImageData(0, 0, processW, processH);
-            const data = imgData.data;
+            for (let i = 0; i < columns.length; i++) {
+                const col = columns[i];
+                const char = phrase[col.charIndex % phrase.length];
 
-            const rawPoints = [];
-            const step = 1; 
-            
-            for (let y = 0; y < processH; y += step) {
-                for (let x = 0; x < processW; x += step) {
-                    const idx = (y * processW + x) * 4;
-                    const r = data[idx];
-                    const g = data[idx + 1];
-                    const b = data[idx + 2];
-                    const brightness = (r + g + b) / 3;
+                // Letra da frente com brilho mais forte
+                ctx.fillStyle = '#f3e8ff';
+                ctx.shadowColor = '#d8b4e2';
+                ctx.shadowBlur = 8;
+                ctx.fillText(char, col.x, col.y);
 
-                    if (brightness < 110) {
-                        rawPoints.push({
-                            normX: x / processW,
-                            normY: y / processH
-                        });
-                    }
+                // Letras anteriores do rastro roxo neon
+                ctx.fillStyle = 'rgba(168, 85, 247, 0.85)';
+                ctx.shadowBlur = 0;
+                ctx.fillText(phrase[(col.charIndex + phrase.length - 1) % phrase.length], col.x, col.y - fontSize);
+
+                col.y += fontSize * 0.85 * (col.speed / 2);
+                col.charIndex++;
+
+                if (col.y > height && Math.random() > 0.95) {
+                    col.y = 0;
                 }
             }
 
-            const isMobile = width < 768;
-            const scaleFactor = isMobile ? 0.6 : 0.75;
-            const drawH = Math.min(height * scaleFactor, 620);
-            const drawW = drawH * (processW / processH);
-
-            const positions = [
-                { posX: width * 0.18 - drawW / 2, opacity: 0.7 },
-                { posX: width * 0.82 - drawW / 2, opacity: 0.7 }
-            ];
-
-            const posY = (height - drawH) / 2;
-
-            positions.forEach(pos => {
-                const sampled = rawPoints.sort(() => 0.5 - Math.random()).slice(0, isMobile ? 4000 : 7500);
-                
-                sampled.forEach(pt => {
-                    const realX = pos.posX + (pt.normX * drawW);
-                    const realY = posY + (pt.normY * drawH);
-                    
-                    particles.push(new Particle(realX, realY, pos.opacity));
-                });
-            });
-        }
-
-        function animate() {
-            frame++;
-            ctx.fillStyle = 'rgba(3, 1, 8, 0.35)';
-            ctx.fillRect(0, 0, width, height);
-
-            ctx.globalCompositeOperation = 'lighter';
-            for (let i = 0; i < particles.length; i++) {
-                particles[i].draw(ctx, frame);
-            }
-            ctx.globalCompositeOperation = 'source-over';
-
-            requestAnimationFrame(animate);
+            requestAnimationFrame(drawMatrix);
         }
 
         playBtn.addEventListener('click', () => {
@@ -321,7 +256,7 @@
                     isPlaying = true;
                     eqIcon.classList.remove('paused');
                     playIcon.className = 'fa-solid fa-pause ml-1 text-xs';
-                }).catch(e => {
+                }).catch(() => {
                     alert("Clique novamente para reproduzir a música!");
                 });
             } else {
@@ -335,7 +270,7 @@
         window.addEventListener('resize', resize);
         window.addEventListener('load', () => {
             resize();
-            animate();
+            drawMatrix();
         });
     </script>
 </body>
