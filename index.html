@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oi, Kabi</title>
+    <!-- Tailwind CSS para estruturação responsiva e rápida -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Tipografia Personalizada e Estilos Específicos */
+        body {
+            background: linear-gradient(to bottom, #ffffff, #e6ccff);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        .texto-principal {
+            font-family: 'OCR A Std', monospace;
+            font-size: 38px;
+            font-weight: bold;
+            color: #000000;
+            line-height: 1.2;
+            word-wrap: break-word;
+            text-align: center;
+        }
+
+        .texto-botao {
+            font-family: 'American Typewriter', serif;
+            font-size: 1.25rem;
+            transition: all 0.3s ease;
+        }
+
+        /* Animação do cursor da máquina de escrever */
+        .cursor {
+            display: inline-block;
+            width: 3px;
+            height: 38px;
+            background-color: black;
+            vertical-align: text-bottom;
+            margin-left: 2px;
+            animation: piscar 0.8s infinite;
+        }
+
+        @keyframes piscar {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Efeito NEON MÁGICO para o botão "Sim" */
+        .neon-magico {
+            border: 2px solid #bbf7d0; /* Borda clara */
+            animation: brilhoMágico 1.5s ease-in-out infinite alternate;
+            /* Garante que o neon fique visível sobre as borboletas */
+            position: relative;
+            z-index: 20; 
+        }
+
+        @keyframes brilhoMágico {
+            0% {
+                box-shadow: 0 0 5px #4ade80, 0 0 15px #22c55e, 0 0 30px #16a34a;
+                transform: scale(1);
+            }
+            100% {
+                box-shadow: 0 0 15px #86efac, 0 0 30px #4ade80, 0 0 50px #22c55e, 0 0 80px #16a34a;
+                transform: scale(1.08);
+            }
+        }
+
+        /* Configuração de Variáveis CSS para o botão "Não" */
+        #btn-nao {
+            --tx: 0px;
+            --ty: 0px;
+            --s: 1;
+            transform: translate(var(--tx), var(--ty)) scale(var(--s));
+            transition: transform 0.3s ease, background-color 0.3s ease;
+            position: relative;
+            z-index: 20;
+        }
+
+        /* ============================================ */
+        /* ANIMAÇÃO DAS BORBOLETAS ROXO BEBÊ            */
+        /* ============================================ */
+        .borboleta-container {
+            position: fixed;
+            top: 0;
+            pointer-events: none;
+            z-index: 1; /* Atrás do texto e dos botões */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .borboleta-asa {
+            /* Transforma o emoji azul em um roxo bebê suave e mágico */
+            filter: hue-rotate(60deg) saturate(0.6) brightness(1.4) opacity(0.85);
+            animation: baterAsas 0.15s infinite alternate ease-in-out;
+            transform-origin: center;
+        }
+
+        @keyframes baterAsas {
+            0% { transform: scaleX(1) translateY(0); }
+            100% { transform: scaleX(0.2) translateY(-2px); } /* O scaleX cria a ilusão 3D de bater asas */
+        }
+
+        @keyframes voar {
+            0% {
+                transform: translateY(110vh) translateX(0) rotate(var(--rotacao));
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-10vh) translateX(var(--desvio)) rotate(var(--rotacao));
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body class="flex flex-col items-center justify-center min-h-screen p-6 relative">
+
+    <!-- Recipiente para as borboletas -->
+    <div id="cenario-borboletas" class="absolute inset-0 overflow-hidden pointer-events-none z-0"></div>
+
+    <div id="text-container" class="texto-principal max-w-2xl min-h-[100px] flex items-center justify-center relative z-10">
+    </div>
+
+    <div id="buttons-container"
+        class="hidden flex-col sm:flex-row gap-6 mt-12 opacity-0 transition-opacity duration-1000 w-full sm:w-auto max-w-md relative z-10">
+
+        <!-- Botão SIM agora possui a classe neon-magico em vez de btn-flutuante -->
+        <button id="btn-sim"
+            class="texto-botao bg-green-500 text-white py-4 px-12 rounded-[50px] neon-magico w-full sm:w-auto">
+            Sim
+        </button>
+
+        <button id="btn-nao"
+            class="texto-botao bg-red-500 text-white py-4 px-12 rounded-2xl w-full sm:w-auto hover:bg-red-600">
+            Não
+        </button>
+
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const textContainer = document.getElementById("text-container");
+            const buttonsContainer = document.getElementById("buttons-container");
+            const btnSim = document.getElementById("btn-sim");
+            const btnNao = document.getElementById("btn-nao");
+            const cenarioBorboletas = document.getElementById("cenario-borboletas");
+
+            const frase1 = "Olá, tudo bem?";
+            const frase2 = "Estaria disponível para uma breve conversa?";
+            const velocidadeDigitacao = 100;
+            const tempoEspera = 2000; 
+
+            // ============================================
+            // GERADOR DE BORBOLETAS
+            // ============================================
+            function criarBorboleta() {
+                const borboletaWrapper = document.createElement('div');
+                borboletaWrapper.classList.add('borboleta-container');
+
+                // Posição horizontal aleatória (0 a 100vw)
+                borboletaWrapper.style.left = Math.random() * 100 + 'vw';
+
+                // Duração do voo (velocidade)
+                const duracaoVoo = Math.random() * 6 + 6; // Entre 6s e 12s
+                
+                // Variáveis CSS para o keyframe de voo
+                const direcaoRotacao = (Math.random() - 0.5) * 40; // Rotação de -20 a 20 graus
+                const desvioLateral = (Math.random() - 0.5) * 300; // Desvio horizontal ao subir
+                
+                borboletaWrapper.style.setProperty('--rotacao', `${direcaoRotacao}deg`);
+                borboletaWrapper.style.setProperty('--desvio', `${desvioLateral}px`);
+                borboletaWrapper.style.animation = `voar ${duracaoVoo}s linear forwards`;
+
+                const borboletaAsa = document.createElement('div');
+                borboletaAsa.classList.add('borboleta-asa');
+                borboletaAsa.innerHTML = '🦋';
+
+                // Tamanhos variados para dar profundidade
+                const tamanho = Math.random() * 1.5 + 1.2; // 1.2rem a 2.7rem
+                borboletaAsa.style.fontSize = `${tamanho}rem`;
+
+                borboletaWrapper.appendChild(borboletaAsa);
+                cenarioBorboletas.appendChild(borboletaWrapper);
+
+                // Remove do DOM após sumir da tela
+                setTimeout(() => {
+                    borboletaWrapper.remove();
+                }, duracaoVoo * 1000);
+            }
+
+            // Inicia a criação constante de borboletas
+            setInterval(criarBorboleta, 450); // Cria uma nova a cada 450ms
+
+            // Efeito de máquina de escrever
+            function digitarTexto(texto, callback) {
+                textContainer.innerHTML = '<span id="typing-text"></span><span class="cursor"></span>';
+                const spanTexto = document.getElementById("typing-text");
+                let i = 0;
+
+                function type() {
+                    if (i < texto.length) {
+                        spanTexto.innerHTML += texto.charAt(i);
+                        i++;
+                        setTimeout(type, velocidadeDigitacao);
+                    } else {
+                        if (callback) {
+                            setTimeout(callback, 100);
+                        }
+                    }
+                }
+                type();
+            }
+
+            // Fluxo de Animação Principal
+            setTimeout(() => {
+                digitarTexto(frase1, () => {
+                    setTimeout(() => {
+                        textContainer.innerHTML = '';
+                        digitarTexto(frase2, () => {
+                            const cursor = document.querySelector('.cursor');
+                            if (cursor) cursor.remove();
+
+                            buttonsContainer.classList.remove('hidden');
+                            buttonsContainer.classList.add('flex');
+
+                            setTimeout(() => {
+                                buttonsContainer.classList.remove('opacity-0');
+                                buttonsContainer.classList.add('opacity-100');
+                            }, 50);
+                        });
+                    }, tempoEspera);
+                });
+            }, 500);
+
+            // ============================================
+            // LÓGICA DE FUGA DO BOTÃO "NÃO"
+            // ============================================
+            let desvios = 0;
+            const maxDesvios = 3;
+
+            function fugirDoMouse() {
+                if (desvios < maxDesvios) {
+                    desvios++;
+                    const sinalX = Math.random() > 0.5 ? 1 : -1;
+                    const sinalY = Math.random() > 0.5 ? 1 : -1;
+                    const moveX = (Math.random() * 90 + 60) * sinalX;
+                    const moveY = (Math.random() * 90 + 60) * sinalY;
+
+                    btnNao.style.setProperty('--tx', `${moveX}px`);
+                    btnNao.style.setProperty('--ty', `${moveY}px`);
+                }
+            }
+
+            btnNao.addEventListener("mouseenter", fugirDoMouse);
+            btnNao.addEventListener("touchstart", (e) => {
+                if (desvios < maxDesvios) {
+                    e.preventDefault(); 
+                    fugirDoMouse();
+                }
+            });
+
+            // ============================================
+            // LÓGICA DE CLIQUE MELHORADA
+            // ============================================
+            function lidarComClique(evento, urlDestino) {
+                evento.preventDefault(); 
+                const botao = evento.currentTarget;
+
+                botao.style.pointerEvents = 'none';
+
+                botao.classList.remove('bg-green-500', 'bg-red-500', 'hover:bg-red-600', 'neon-magico');
+                botao.style.backgroundColor = '#d8b4e2';
+                botao.style.boxShadow = 'none';
+                
+                if (botao.id === 'btn-nao') {
+                    botao.style.setProperty('--s', '0.95');
+                } else {
+                    botao.style.transform = 'scale(0.95)';
+                }
+
+                setTimeout(() => {
+                    window.location.assign(urlDestino);
+                }, 400);
+            }
+
+            btnSim.addEventListener("click", (e) => lidarComClique(e, "sim.html"));
+            
+            btnNao.addEventListener("click", (e) => {
+                if (desvios >= maxDesvios) {
+                    lidarComClique(e, "nao.html");
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oi, Kabi</title>
+    <!-- Tailwind CSS para estruturação responsiva e rápida -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Tipografia Personalizada e Estilos Específicos */
+        body {
+            background: linear-gradient(to bottom, #ffffff, #e6ccff);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        .texto-principal {
+            font-family: 'OCR A Std', monospace;
+            font-size: 32px;
+            font-weight: bold;
+            color: #000000;
+            line-height: 1.4;
+            word-wrap: break-word;
+            text-align: center;
+        }
+
+        .texto-botao {
+            font-family: 'American Typewriter', serif;
+            font-size: 1.25rem;
+            transition: all 0.3s ease;
+        }
+
+        /* Animação do cursor da máquina de escrever */
+        .cursor {
+            display: inline-block;
+            width: 3px;
+            height: 32px;
+            background-color: black;
+            vertical-align: text-bottom;
+            margin-left: 2px;
+            animation: piscar 0.8s infinite;
+        }
+
+        @keyframes piscar {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Efeito de Créditos de Filme Subindo */
+        .creditos-container {
+            font-family: 'Georgia', serif;
+            font-size: 1.35rem;
+            line-height: 2.2;
+            color: #2c1654;
+            text-align: center;
+            max-width: 600px;
+            position: absolute;
+            width: 100%;
+            animation: subirCreditos 22s linear forwards;
+            padding: 0 20px;
+        }
+
+        @keyframes subirCreditos {
+            0% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            85% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-120vh);
+                opacity: 0;
+            }
+        }
+
+        /* Balão Flutuante e Efeito do Botão */
+        .balao-flutuante {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+            border: 2px solid #d8b4e2;
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.15);
+            animation: flutuarBalao 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes flutuarBalao {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-8px); }
+        }
+
+        .btn-interativo {
+            transition: all 0.3s ease;
+        }
+
+        .btn-interativo:hover, .btn-interativo:active {
+            background-color: #9333ea !important; /* Roxo */
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(147, 51, 234, 0.4);
+        }
+
+        /* ============================================ */
+        /* ANIMAÇÃO DAS BORBOLETAS ROXO BEBÊ            */
+        /* ============================================ */
+        .borboleta-container {
+            position: fixed;
+            top: 0;
+            pointer-events: none;
+            z-index: 1; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .borboleta-asa {
+            filter: hue-rotate(60deg) saturate(0.6) brightness(1.4) opacity(0.85);
+            animation: baterAsas 0.15s infinite alternate ease-in-out;
+            transform-origin: center;
+        }
+
+        @keyframes baterAsas {
+            0% { transform: scaleX(1) translateY(0); }
+            100% { transform: scaleX(0.2) translateY(-2px); }
+        }
+
+        @keyframes voar {
+            0% {
+                transform: translateY(110vh) translateX(0) rotate(var(--rotacao));
+                opacity: 0;
+            }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% {
+                transform: translateY(-10vh) translateX(var(--desvio)) rotate(var(--rotacao));
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body class="flex flex-col items-center justify-center min-h-screen p-6 relative overflow-hidden">
+
+    <!-- Recipiente para as borboletas -->
+    <div id="cenario-borboletas" class="absolute inset-0 overflow-hidden pointer-events-none z-0"></div>
+
+    <!-- Container Principal do Texto / Máquina de Escrever -->
+    <div id="text-container" class="texto-principal max-w-2xl min-h-[120px] flex items-center justify-center relative z-10 px-4">
+    </div>
+
+    <!-- Container para os Créditos de Filme -->
+    <div id="creditos-wrapper" class="absolute inset-0 flex items-center justify-center pointer-events-none z-10 overflow-hidden hidden">
+        <div id="creditos-conteudo" class="creditos-container">
+            Eu poderia não viver tuas primeiras rugas,<br>
+            nem estar aqui pra adivinhar a tua memória em fuga,<br>
+            mas eu não quero. Eu não quero.<br><br>
+            Eu poderia não lidar.<br>
+            Eu poderia nem ligar.<br>
+            Mas não, eu não quero não.<br><br>
+            Poderia imaginar ou até acostumar o meu querer, noutro lugar.<br>
+            Tanta coisa em que aqui cabe um sim.<br><br>
+            <span style="font-size: 1.1rem; font-style: italic;">— Porque Eu Te Amo, Anavitória</span>
+        </div>
+    </div>
+
+    <!-- Container do Balão Flutuante Final -->
+    <div id="balao-container" class="hidden flex-col items-center justify-center p-8 rounded-3xl balao-container max-w-md w-full relative z-20 opacity-0 transition-opacity duration-1000">
+        <p id="balao-texto" class="texto-principal text-xl mb-6 text-center text-purple-950"></p>
+        
+        <a id="btn-sim" href="https://wa.me/5535997151498?text=Oi!%20Sim,%20bora." target="_blank"
+            class="texto-botao bg-green-500 text-white py-4 px-12 rounded-[50px] btn-interativo text-center shadow-lg">
+            Sim, pô
+        </a>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const textContainer = document.getElementById("text-container");
+            const creditosWrapper = document.getElementById("creditos-wrapper");
+            const balaoContainer = document.getElementById("balao-container");
+            const balaoTexto = document.getElementById("balao-texto");
+            const cenarioBorboletas = document.getElementById("cenario-borboletas");
+
+            const fraseInicial = "Venho te pedir um recomeço. Uma última chance para nos conhecermos de verdade.";
+            const perguntaFinal = "Mereço mais um sim?";
+            const velocidadeDigitacao = 60;
+
+            // ============================================
+            // GERADOR DE BORBOLETAS
+            // ============================================
+            function criarBorboleta() {
+                const borboletaWrapper = document.createElement('div');
+                borboletaWrapper.classList.add('borboleta-container');
+                borboletaWrapper.style.left = Math.random() * 100 + 'vw';
+
+                const duracaoVoo = Math.random() * 6 + 6; 
+                const direcaoRotacao = (Math.random() - 0.5) * 40; 
+                const desvioLateral = (Math.random() - 0.5) * 300; 
+                
+                borboletaWrapper.style.setProperty('--rotacao', `${direcaoRotacao}deg`);
+                borboletaWrapper.style.setProperty('--desvio', `${desvioLateral}px`);
+                borboletaWrapper.style.animation = `voar ${duracaoVoo}s linear forwards`;
+
+                const borboletaAsa = document.createElement('div');
+                borboletaAsa.classList.add('borboleta-asa');
+                borboletaAsa.innerHTML = '🦋';
+
+                const tamanho = Math.random() * 1.5 + 1.2;
+                borboletaAsa.style.fontSize = `${tamanho}rem`;
+
+                borboletaWrapper.appendChild(borboletaAsa);
+                cenarioBorboletas.appendChild(borboletaWrapper);
+
+                setTimeout(() => {
+                    borboletaWrapper.remove();
+                }, duracaoVoo * 1000);
+            }
+
+            setInterval(criarBorboleta, 450);
+
+            // Efeito de máquina de escrever
+            function digitarTexto(texto, elementoAlvo, callback) {
+                elementoAlvo.innerHTML = '<span id="typing-text"></span><span class="cursor"></span>';
+                const spanTexto = document.getElementById("typing-text");
+                let i = 0;
+
+                function type() {
+                    if (i < texto.length) {
+                        spanTexto.innerHTML += texto.charAt(i);
+                        i++;
+                        setTimeout(type, velocidadeDigitacao);
+                    } else {
+                        const cursor = document.querySelector('.cursor');
+                        if (cursor) cursor.remove();
+                        if (callback) {
+                            setTimeout(callback, 800);
+                        }
+                    }
+                }
+                type();
+            }
+
+            // ============================================
+            // FLUXO DA ANIMAÇÃO
+            // ============================================
+            setTimeout(() => {
+                // 1. Digita a primeira frase
+                digitarTexto(fraseInicial, textContainer, () => {
+                    // 2. Apaga o texto anterior e exibe os créditos subindo
+                    textContainer.innerHTML = '';
+                    creditosWrapper.classList.remove('hidden');
+
+                    // 3. Aguarda os créditos subirem (cerca de 20 segundos) e mostra o balão final
+                    setTimeout(() => {
+                        creditosWrapper.classList.add('hidden');
+                        balaoContainer.classList.remove('hidden');
+                        balaoContainer.classList.add('flex');
+
+                        setTimeout(() => {
+                            balaoContainer.classList.remove('opacity-0');
+                            balaoContainer.classList.add('opacity-100');
+                            // 4. Digita a pergunta final dentro do balão flutuante
+                            digitarTexto(perguntaFinal, balaoTexto);
+                        }, 50);
+
+                    }, 20500); // Tempo correspondente à rolagem dos créditos
+                });
+            }, 500);
+        });
+    </script>
+</body>
+</html>

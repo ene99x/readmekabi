@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uma Oportunidade</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+            /* Fundo Gradiente de Azul Escuro, Azul Claro para Branco */
+            background: linear-gradient(180deg, #0f172a 0%, #1e3a8a 35%, #3b82f6 70%, #eff6ff 100%);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: #ffffff;
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Glassmorphism Panel em tom Azul/Ciano */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(186, 230, 253, 0.4);
+            box-shadow: 0 8px 32px 0 rgba(14, 165, 233, 0.3),
+                        inset 0 0 15px rgba(186, 230, 253, 0.2);
+        }
+
+        /* Caixa de Texto customizada */
+        .text-box-custom {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1.5px solid rgba(186, 230, 253, 0.4);
+            border-radius: 20px;
+            padding: 28px 32px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), inset 0 0 15px rgba(186, 230, 253, 0.15);
+        }
+
+        /* Botão Neon Azul Flutuante */
+        .neon-btn {
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.3) 0%, rgba(14, 165, 233, 0.6) 100%);
+            border: 1px solid rgba(186, 230, 253, 0.8);
+            color: #f0f9ff;
+            text-shadow: 0 0 10px rgba(56, 189, 248, 0.8), 0 0 20px rgba(14, 165, 233, 0.6);
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.4), inset 0 0 10px rgba(186, 230, 253, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .neon-btn:hover {
+            transform: translateY(-4px) scale(1.03);
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.5) 0%, rgba(14, 165, 233, 0.8) 100%);
+            box-shadow: 0 0 35px rgba(56, 189, 248, 0.8), 0 0 55px rgba(14, 165, 233, 0.6);
+            border-color: #ffffff;
+        }
+
+        /* Float Animation para o Botão/Caixa */
+        @keyframes floatUpDown {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .floating-element {
+            animation: floatUpDown 3.5s ease-in-out infinite;
+        }
+
+        /* Equalizer Bars */
+        .eq-bar {
+            width: 3px;
+            background-color: #7dd3fc;
+            border-radius: 3px;
+            animation: eq 1s ease-in-out infinite alternate;
+        }
+        .eq-bar:nth-child(1) { height: 10px; animation-delay: 0.1s; }
+        .eq-bar:nth-child(2) { height: 18px; animation-delay: 0.3s; }
+        .eq-bar:nth-child(3) { height: 14px; animation-delay: 0.2s; }
+        
+        @keyframes eq {
+            0% { height: 4px; }
+            100% { height: 18px; }
+        }
+        .paused .eq-bar {
+            animation-play-state: paused;
+            height: 4px !important;
+        }
+    </style>
+</head>
+<body class="relative min-h-screen flex flex-col justify-between items-center overflow-y-auto">
+
+    <!-- Canvas para Efeito de Chuva Forte -->
+    <canvas id="rainCanvas"></canvas>
+
+    <!-- Overlay de Interface -->
+    <div class="relative z-10 flex flex-col items-center justify-between w-full max-w-4xl min-h-screen p-6 pointer-events-none">
+        
+        <!-- HEADER: Botão de Música -->
+        <header class="w-full flex justify-center pointer-events-auto pt-2">
+            <button id="playBtn" class="neon-btn px-6 py-3 rounded-full flex items-center gap-3 text-sm md:text-base font-bold tracking-wide">
+                <div id="eqIcon" class="flex items-end gap-1 h-5 paused">
+                    <div class="eq-bar"></div>
+                    <div class="eq-bar"></div>
+                    <div class="eq-bar"></div>
+                </div>
+                <span>Leão - Xamã feat. Marília Mendonça  🎵</span>
+                <i id="playIcon" class="fa-solid fa-play ml-1 text-xs"></i>
+            </button>
+        </header>
+
+        <!-- CENTER: Mensagem com Texto Grande -->
+        <main class="w-full max-w-2xl my-auto pointer-events-auto px-4 text-center">
+            <div class="glass-panel text-box-custom flex flex-col items-center justify-center gap-6 shadow-2xl">
+                
+                <p class="text-2xl md:text-4xl lg:text-5xl font-extrabold text-sky-100 tracking-tight leading-snug drop-shadow-[0_0_15px_rgba(56,189,248,0.6)]">
+                    Poxa, eu entendo!
+                </p>
+
+                <p class="text-xl md:text-3xl lg:text-4xl font-bold text-sky-200/95 leading-normal drop-shadow-md">
+                    Mas me dê uma oportunidade de apenas ler o que tenho a dizer. 💙
+                </p>
+                <p class="text-lg md:text-xl font-medium text-sky-300/90 leading-relaxed">
+                    Prometo que não é virus! 🤝
+                </p>
+            </div>
+        </main>
+
+        <!-- FOOTER: Botão Flutuante Neon "Voltar ao começo" -->
+        <footer class="w-full flex flex-col items-center gap-4 pb-8 pointer-events-auto text-center">
+            
+            <!-- Botão Neon Flutuante com Link para index.html -->
+            <a href="index.html" class="floating-element neon-btn px-10 py-4 rounded-full text-lg md:text-2xl font-black tracking-wider uppercase inline-flex items-center gap-3">
+                <i class="fa-solid fa-rotate-left text-xl"></i>
+                Voltar ao começo ✨
+            </a>
+
+            <span class="text-xs text-sky-900/70 font-semibold tracking-wider mt-2">
+                Renderizado via HTML5 Canvas • Anellize 💙 2026
+            </span>
+        </footer>
+    </div>
+
+    <!-- AUDIO ELEMENT -->
+    <audio id="bgMusic" loop preload="auto">
+        <source src="Leão.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // --- EFEITO DE CHUVA FORTE EM AZUL CLARO NO CANVAS ---
+        const canvas = document.getElementById('rainCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let width, height;
+        let raindrops = [];
+
+        // Quantidade de gotas para uma chuva forte
+        const RAIN_COUNT = 350;
+
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+            initRain();
+        }
+
+        class RainDrop {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * -height;
+                this.length = 15 + Math.random() * 25; // Gotas compridas
+                this.speed = 18 + Math.random() * 12;  // Chuva rápida/forte
+                this.opacity = 0.4 + Math.random() * 0.5;
+                this.width = 1.5 + Math.random() * 1.2;
+            }
+
+            update() {
+                this.y += this.speed;
+                // Leve inclinação devido ao vento forte
+                this.x += 1.5;
+
+                if (this.y > height) {
+                    this.reset();
+                    this.y = 0;
+                }
+            }
+
+            draw(ctx) {
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y);
+                ctx.lineTo(this.x + 2, this.y + this.length);
+                
+                // Cor azul clara neon para as gotas
+                ctx.strokeStyle = `rgba(186, 230, 253, ${this.opacity})`;
+                ctx.lineWidth = this.width;
+                ctx.lineCap = 'round';
+                ctx.stroke();
+            }
+        }
+
+        function initRain() {
+            raindrops = [];
+            for (let i = 0; i < RAIN_COUNT; i++) {
+                raindrops.push(new RainDrop());
+            }
+        }
+
+        function animateRain() {
+            ctx.clearRect(0, 0, width, height);
+
+            for (let i = 0; i < raindrops.length; i++) {
+                raindrops[i].update();
+                raindrops[i].draw(ctx);
+            }
+
+            requestAnimationFrame(animateRain);
+        }
+
+        // --- MÚSICA DE FUNDO ---
+        const playBtn = document.getElementById('playBtn');
+        const playIcon = document.getElementById('playIcon');
+        const eqIcon = document.getElementById('eqIcon');
+        const bgMusic = document.getElementById('bgMusic');
+
+        let isPlaying = false;
+
+        playBtn.addEventListener('click', () => {
+            if (!isPlaying) {
+                bgMusic.play().then(() => {
+                    isPlaying = true;
+                    eqIcon.classList.remove('paused');
+                    playIcon.className = 'fa-solid fa-pause ml-1 text-xs';
+                }).catch(e => {
+                    alert("Clique novamente para tocar a música!");
+                });
+            } else {
+                bgMusic.pause();
+                isPlaying = false;
+                eqIcon.classList.add('paused');
+                playIcon.className = 'fa-solid fa-play ml-1 text-xs';
+            }
+        });
+
+        window.addEventListener('resize', resize);
+        window.addEventListener('load', () => {
+            resize();
+            animateRain();
+        });
+    </script>
+</body>
+</html>

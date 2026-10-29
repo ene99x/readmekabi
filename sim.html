@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Obrigada por me escutar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Tipografia Personalizada e Estilos Específicos */
+        body {
+            background: linear-gradient(to bottom, #ffffff, #e6ccff);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        .texto-principal {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 36px;
+            font-weight: bold;
+            color: #000000;
+            line-height: 1.3;
+            word-wrap: break-word;
+            text-align: center;
+        }
+
+        .texto-botao {
+            font-family: 'American Typewriter', serif;
+            font-size: 1.25rem;
+            transition: all 0.3s ease;
+        }
+
+        /* Estilo para os itens da lista em formato de card flutuante */
+        .texto-lista {
+            font-family: 'American Typewriter', serif;
+            font-size: 1.5rem;
+            color: #1a1a1a;
+            margin-bottom: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            background-color: #f5ebff;
+            border: 2px solid #e0c2ff;
+            border-radius: 16px;
+            padding: 20px 24px;
+            width: 100%;
+            max-width: 650px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.15), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Estilo para o bloco de vídeo perfeitamente dimensionado */
+        .video-box {
+            width: 100%;
+            max-width: 600px;
+            height: 350px;
+            margin-top: 15px;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .card-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            outline: none;
+            display: block;
+        }
+
+        /* Estilo corrigido para imagens */
+        .image-box {
+            width: 100%;
+            max-width: 600px;
+            height: auto;
+            margin-top: 15px;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .card-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Botão Neon Roxo Bebê */
+        .btn-neon {
+            font-family: 'American Typewriter', serif;
+            font-size: 1.25rem;
+            color: #4a0072;
+            text-decoration: none;
+            padding: 16px 32px;
+            border: 2px solid #d8b4ff;
+            border-radius: 50px;
+            background-color: rgba(216, 180, 255, 0.3);
+            box-shadow: 0 0 10px #e0c2ff, 0 0 20px #d8b4ff, inset 0 0 10px #e0c2ff;
+            transition: all 0.3s ease;
+            display: inline-block;
+            position: relative;
+            z-index: 20;
+        }
+
+        .btn-neon:hover {
+            background-color: #f5ebff;
+            color: #4a0072;
+            box-shadow: 0 0 20px #e0c2ff, 0 0 40px #d8b4ff, inset 0 0 20px #e0c2ff;
+            transform: translateY(-4px);
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 3px;
+            height: 36px;
+            background-color: black;
+            vertical-align: text-bottom;
+            margin-left: 2px;
+            animation: piscar 0.8s infinite;
+        }
+
+        @keyframes piscar {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-up {
+            animation: fadeUp 0.6s ease forwards;
+        }
+
+        .btn-flutuante {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.15), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+            transform: translateY(0);
+            position: relative;
+            z-index: 20;
+        }
+
+        .btn-flutuante:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* ============================================ */
+        /* ANIMAÇÃO DAS BORBOLETAS ROXO BEBÊ (MAIS LENTAS)*/
+        /* ============================================ */
+        .borboleta-container {
+            position: fixed;
+            top: 0;
+            pointer-events: none;
+            z-index: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .borboleta-asa {
+            filter: hue-rotate(60deg) saturate(0.6) brightness(1.4) opacity(0.85);
+            animation: baterAsas 0.25s infinite alternate ease-in-out;
+            transform-origin: center;
+        }
+
+        @keyframes baterAsas {
+            0% { transform: scaleX(1) translateY(0); }
+            100% { transform: scaleX(0.2) translateY(-2px); }
+        }
+
+        @keyframes voar {
+            0% {
+                transform: translateY(110vh) translateX(0) rotate(var(--rotacao));
+                opacity: 0;
+            }
+            15% { opacity: 1; }
+            85% { opacity: 1; }
+            100% {
+                transform: translateY(-10vh) translateX(var(--desvio)) rotate(var(--rotacao));
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body class="flex flex-col items-center justify-center min-h-screen p-6 relative">
+
+    <!-- Recipiente para as borboletas -->
+    <div id="cenario-borboletas" class="absolute inset-0 overflow-hidden pointer-events-none z-0"></div>
+
+    <!-- Container do texto da máquina de escrever -->
+    <div id="text-container"
+        class="texto-principal max-w-4xl min-h-[120px] flex items-center justify-center relative z-10">
+    </div>
+
+    <!-- Container da lista -->
+    <div id="lista-container"
+        class="hidden flex-col items-center justify-center max-w-3xl w-full mb-8 text-center mt-8 space-y-4 relative z-10">
+    </div>
+
+    <div id="buttons-container"
+        class="hidden flex-col sm:flex-row gap-6 mt-8 opacity-0 transition-opacity duration-1000 w-full sm:w-auto max-w-md justify-center relative z-10">
+        <button id="btn-acao"
+            class="texto-botao bg-purple-200 hover:bg-purple-300 text-purple-950 py-4 px-12 rounded-[50px] btn-flutuante w-full sm:w-auto font-bold">
+            Diga, mulher
+        </button>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const textContainer = document.getElementById("text-container");
+            const buttonsContainer = document.getElementById("buttons-container");
+            const listaContainer = document.getElementById("lista-container");
+            const btnAcao = document.getElementById("btn-acao");
+            const cenarioBorboletas = document.getElementById("cenario-borboletas");
+
+            // ============================================
+            // GERADOR DE BORBOLETAS
+            // ============================================
+            function criarBorboleta() {
+                const borboletaWrapper = document.createElement('div');
+                borboletaWrapper.classList.add('borboleta-container');
+
+                borboletaWrapper.style.left = Math.random() * 100 + 'vw';
+
+                const duracaoVoo = Math.random() * 5 + 9; 
+                const direcaoRotacao = (Math.random() - 0.5) * 30;
+                const desvioLateral = (Math.random() - 0.5) * 200;
+
+                borboletaWrapper.style.setProperty('--rotacao', `${direcaoRotacao}deg`);
+                borboletaWrapper.style.setProperty('--desvio', `${desvioLateral}px`);
+                borboletaWrapper.style.animation = `voar ${duracaoVoo}s linear forwards`;
+
+                const borboletaAsa = document.createElement('div');
+                borboletaAsa.classList.add('borboleta-asa');
+                borboletaAsa.innerHTML = '🦋';
+
+                const tamanho = Math.random() * 1.3 + 1.1;
+                borboletaAsa.style.fontSize = `${tamanho}rem`;
+
+                borboletaWrapper.appendChild(borboletaAsa);
+                cenarioBorboletas.appendChild(borboletaWrapper);
+
+                setTimeout(() => {
+                    borboletaWrapper.remove();
+                }, duracaoVoo * 1000);
+            }
+
+            setInterval(criarBorboleta, 700);
+
+            const frasesIntro = [
+                "Obrigado por mais essa oportunidade..",
+                "Notei muitas coisas nesse tempo em que estivemos nessa situação.",
+                "Gostaria de listar 8 coisas que reconheci sobre você e me fez repensar sobre tudo."
+            ];
+
+            const oitoCoisas = [
+                `1. Eu sei o quanto você preza pela sua paz e como o desgaste dos conflitos te dói. Nesta fase da vida, o que buscamos não é o atrito, mas um refúgio: alguém que não apenas preserve a nossa serenidade, mas que some forças para construí-la e mantê-la. Reconheço o peso dos meus erros em romper com este equilíbrio, e assumo a responsabilidade por eles. No fundo, sei que o meu desejo mais profundo — assim como o seu — é encontrar, enfim, a segurança de um porto seguro e a solidez de uma estabilidade e crescimento mútuo.
+                 <div class="video-box">
+                     <video class="card-video" autoplay loop muted playsinline>
+                         <source src="note1.mp4" type="video/mp4">
+                         Seu navegador não suporta vídeos.
+                     </video>
+                 </div>`,
+
+                `2. Eu amo o brilho da sua inteligência, o jeito que você se encaixa nos meus abraços — bem baixinha, com a sua respiração quente no meu pescoço — e a calma intensa com que você me beija. Mas o que me desmonta, é o seu sorriso. E o fato intrigante de quanto mais o tempo passa, mais linda você fica.
+                 <div class="video-box">
+                     <video class="card-video" autoplay loop muted playsinline>
+                         <source src="note2.mp4" type="video/mp4">
+                         Seu navegador não suporta vídeos.
+                     </video>
+                 </div>`,
+
+                `3. Admiro profundamente a sua garra. Mesmo diante da dor da perda e seu luto, de ter que carregar o peso do mundo sozinha, você manteve o prumo e continuou sendo presente para a sua mãe. A mulher forte que você se tornou é a prova viva de uma resiliência rara. Em meio a tantas tempestades, você sempre seguiu em frente — e eu te admiro infinitamente por isso.
+                 <div class="video-box">
+                     <video class="card-video" autoplay loop muted playsinline>
+                         <source src="note3.mp4" type="video/mp4">
+                         Seu navegador não suporta vídeos.
+                     </video>
+                 </div>`,
+
+                `4. Ver você com crianças é testemunhar a essência mais pura da sua bondade: é a sua alma escancarada, inteira e sem defesas. Há um amor e um cuidado tão genuínos em cada gesto seu com seres tão frágeis, que me desmontam por inteiro. Foi a dedicação de um profissional como você que salvou a minha vida, me permitindo estar aqui hoje só para poder te olhar, te admirar e te dizer tudo isso.
+                 <div class="video-box">
+                     <video class="card-video" autoplay loop muted playsinline>
+                         <source src="note4.mp4" type="video/mp4">
+                         Seu navegador não suporta vídeos.
+                     </video>
+                 </div>`,
+
+                `5. Como o seu gosto musical é totalmente diferente do meu, mas ainda assim, você se abriu para ouvir minhas músicas e até se emocionou com algumas delas. Isso me fez perceber o quanto você é aberta e receptiva, mesmo diante de algo que não é familiar para você. É uma qualidade rara e valiosa, que me faz admirar ainda mais você.
+                 <div class="video-box">
+                     <video class="card-video" autoplay loop muted playsinline>
+                         <source src="note5.mp4" type="video/mp4">
+                         Seu navegador não suporta vídeos.
+                     </video>
+                 </div>`,
+
+                `6. Eu sei que você é uma mulher de princípios, e que a sua integridade é algo que você valoriza acima de tudo. Eu respeito isso profundamente, e quero que saiba que eu também compartilho desses mesmos valores. É por isso que eu quero ser honesta com você, e dizer que eu reconheço os meus erros e estou disposta a fazer o que for necessário para reconquistar a sua confiança e dessa vez eu vou fazer diferente.
+                   <div class="image-box">
+                     <img src="note6.jpeg" alt="Imagem 6" class="card-image">
+                 </div>`,  /* <-- VÍRGULA ADICIONADA AQUI */
+
+                `7. Nesta altura, Kabi, nós duas já reconhecemos nossas falhas. Eu errei pela impaciência e pela falta de filtro quando a raiva me cegava. Mas você também errou ao me deixar sempre à espera, na incerteza, parecendo brincar com um sentimento que para mim sempre foi sagrado.
+                 Deixando o orgulho de lado, esta é a minha última tentativa de te falar a verdade sem defesas: apesar de tudo, o que sinto é real. Só queria que você pudesse prestar atenção nisso.
+                 <div class="image-box">
+                     <img src="note7.jpeg" alt="Imagem 7" class="card-image">
+                 </div>`,  /* <-- VÍRGULA ADICIONADA AQUI */
+
+                `8. Eu sei que você é uma mulher incrível, e que merece ser amada e respeitada. Eu quero que consigamos começar novamente, e com uma base sólida de respeito mútuo. Eu quero que você saiba que eu estou aqui para você, e que eu quero fazer tudo o que estiver ao meu alcance para te fazer feliz.
+                 <div class="image-box">
+                     <img src="note8.jpeg" alt="Imagem 8" class="card-image">
+                 </div>`
+            ];
+
+            const velocidadeDigitacao = 55;
+            const tempoEspera = 2000;
+
+            function digitarTexto(texto, callback) {
+                textContainer.innerHTML = '<span id="typing-text"></span><span class="cursor"></span>';
+                const spanTexto = document.getElementById("typing-text");
+                let i = 0;
+
+                function type() {
+                    if (i < texto.length) {
+                        spanTexto.innerHTML += texto.charAt(i);
+                        i++;
+                        setTimeout(type, velocidadeDigitacao);
+                    } else {
+                        if (callback) {
+                            setTimeout(callback, 100);
+                        }
+                    }
+                }
+                type();
+            }
+
+            setTimeout(() => {
+                digitarTexto(frasesIntro[0], () => {
+                    setTimeout(() => {
+                        textContainer.innerHTML = '';
+                        digitarTexto(frasesIntro[1], () => {
+                            setTimeout(() => {
+                                textContainer.innerHTML = '';
+                                digitarTexto(frasesIntro[2], () => {
+                                    const cursor = document.querySelector('.cursor');
+                                    if (cursor) cursor.remove();
+
+                                    buttonsContainer.classList.remove('hidden');
+                                    buttonsContainer.classList.add('flex');
+
+                                    setTimeout(() => {
+                                        buttonsContainer.classList.remove('opacity-0');
+                                        buttonsContainer.classList.add('opacity-100');
+                                    }, 50);
+                                });
+                            }, tempoEspera);
+                        });
+                    }, tempoEspera);
+                });
+            }, 500);
+
+            let clickCount = 0;
+
+            btnAcao.addEventListener("click", () => {
+                if (clickCount === 0) {
+                    textContainer.classList.add('hidden');
+                    listaContainer.classList.remove('hidden');
+                    listaContainer.classList.add('flex');
+                    btnAcao.textContent = "Continuar lendo...";
+                }
+
+                if (clickCount < oitoCoisas.length) {
+                    const novoItem = document.createElement("div");
+                    novoItem.className = "texto-lista animate-fade-up";
+                    novoItem.innerHTML = oitoCoisas[clickCount];
+                    listaContainer.appendChild(novoItem);
+
+                    clickCount++;
+
+                    setTimeout(() => {
+                        novoItem.scrollIntoView({ behavior: "smooth", block: "end" });
+                    }, 100);
+
+                    if (clickCount === oitoCoisas.length) {
+                        btnAcao.classList.add("hidden");
+
+                        const btnNeon = document.createElement("a");
+                        btnNeon.href = "proximopasso.html";
+                        btnNeon.className = "btn-neon mt-4";
+                        btnNeon.textContent = "Clique para o próximo passo";
+                        buttonsContainer.appendChild(btnNeon);
+
+                        setTimeout(() => {
+                            btnNeon.scrollIntoView({ behavior: "smooth", block: "center" });
+                        }, 300);
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
